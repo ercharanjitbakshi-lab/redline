@@ -1,9 +1,10 @@
 # Redline
 
-A web app for a freelancer reviewing an agreement before signing it: paste the
-contract and get back an analysis the user can trust, and a counter-offer they
-can send. This version exists to prove the analysis is trustworthy — nothing
-else earns priority over that. See `docs/adr/0003` for who this is and isn't for.
+A web app for a freelancer reviewing an agreement before signing it: upload the
+contract (a PDF or DOCX) and get back an analysis the user can trust, and a
+counter-offer they can send. This version exists to prove the analysis is
+trustworthy — nothing else earns priority over that. See `docs/adr/0003` for who
+this is and isn't for.
 
 ## Stack (settled — do not reconsider)
 

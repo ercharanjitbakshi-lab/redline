@@ -1,6 +1,7 @@
 # Redline — Product Brief
 
-Redline reviews a freelance contract before it is signed. Paste the agreement;
+Redline reviews a freelance contract before it is signed. Upload the contract —
+a PDF or DOCX, parsed in the browser so only the extracted text is stored — and
 get back a plain-English summary, a ranked list of clauses that could hurt you —
 each tied to the exact sentence it came from — a drafted counter-offer for each,
 a list of protections the contract is missing, and a question box that answers
@@ -16,9 +17,13 @@ recorded in `docs/adr/`; the vocabulary is in `CONTEXT.md`.
 
 **The freelancer who negotiates.** An independent contractor who reviews a
 services agreement, statement of work, IP or brand-deal contract **before signing
-it**, and who will push back on terms rather than sign as-is. They see contracts
-often enough that a tool earns a place in their workflow, they can still change
-the deal, and a counter-offer is something they will actually send. (`docs/adr/0003`.)
+it**, and who will push back on terms rather than sign as-is. Two things define
+them: they can still change the deal, and a counter-offer is something they will
+actually send. (`docs/adr/0003`.)
+
+The brief assumes this person sees contracts often enough for a review tool to
+earn a place in their workflow. That is an assumption, not a finding — §8 is
+where it gets tested.
 
 This is deliberately narrower than "freelancers." The research finds that fewer
 than 1% of freelancers who lose wages to non-payment ever use the legal system
@@ -146,9 +151,11 @@ description says what an acceptable result means.
 - **Q&A grounding.** On a question set with answerable and unanswerable
   questions: answerable ones are answered with the passage cited; unanswerable
   ones get "the document doesn't say," not an answer from general knowledge.
-- **Voice.** Output contains no hedge words — "may," "might," "could be seen as,"
-  "potentially." Every flag is a statement or a question (`docs/adr/0005`).
-  Scannable by a search over the output.
+- **Voice.** Redline's own prose — everything outside the quoted source sentences
+  — contains no hedge words: "may," "might," "could be seen as," "potentially,"
+  "arguably." Every flag reads as a statement or a question, never a qualified
+  worry (`docs/adr/0005`). Checked by scanning the generated text with the quoted
+  spans removed.
 - **Time to understanding.** A freelancer unfamiliar with the contract can, after
   reading the report, correctly name the top three things to push back on. Tested
   in user sessions.
@@ -188,9 +195,9 @@ draws complaints (`docs/adr/0004`).
 4. **Payment terms that delay or gate payment.** Approval-gated pay ("paid on
    acceptance," with acceptance undefined), net-60/90, kill fees invoked after
    most of the work is done. *Why:* the most common way freelancers actually lose
-   money (research §1). Ranked below the first three because it is usually
-   recoverable and often industry-standard — severe in frequency, not in
-   permanence.
+   money (research §1). Ranked below the first three because the damage is
+   usually recoverable — this is the most frequent risk, not the most permanent
+   one, and severity here tracks permanence.
 
 ### Moderate — shown, not necessarily in the summary
 
@@ -292,7 +299,7 @@ Each entry: the choice, what it was chosen against, and who is worse off for it.
   (`CLAUDE.md`, `docs/adr/0001`).
 - **Terms-of-service and subscription review.** See call 3 above.
 - **Analysis tuned for leases.** A freelancer's own apartment lease will be
-  analysed if pasted, but the clause library and severity model are built for
+  analysed if uploaded, but the clause library and severity model are built for
   freelance agreements, and the product says so rather than pretending otherwise
   (`docs/adr/0003`).
 - **The post-signing "what am I bound by / what's my recourse" framing.** See
