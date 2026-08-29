@@ -1,6 +1,8 @@
 # 0001 — Every flag cites its source sentence
 
 Date: 2026-08-28 · Status: Accepted
+Amended by: ADR 0006 — the guarantee is scoped to the *flags* section; the "Not
+in this contract" section makes claims about absence and is the defined exception.
 
 ## Decision
 
