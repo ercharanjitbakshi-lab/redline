@@ -66,3 +66,9 @@ Thumbs.db
 .cache/
 tmp/
 temp/
+
+# Impeccable — local session/review artifacts (design.json and surfaces/ are durable, kept)
+.impeccable/questions/
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/hook.cache.json
