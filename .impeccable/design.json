@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-11T00:00:00Z",
+  "title": "Design System: Redline",
+  "extensions": {
+    "colorMeta": {
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#f2f0ea", "tonalRamp": ["#1c1a16", "#2e2b24", "#453f34", "#635a48", "#8a7f68", "#b3a98f", "#d6cfba", "#f2f0ea"] },
+      "page": { "role": "neutral", "displayName": "Page", "canonical": "#fffdf9", "tonalRamp": ["#1c1a16", "#332f27", "#4d473a", "#6b6350", "#8f866c", "#b5ab8d", "#ddd6c0", "#fffdf9"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#1c1a16", "tonalRamp": ["#0d0c0a", "#1c1a16", "#2e2b24", "#453f34", "#635a48", "#8a7f68", "#b3a98f", "#ddd6c0"] },
+      "ink-quiet": { "role": "neutral", "displayName": "Quiet Ink", "canonical": "#58544a", "tonalRamp": ["#221f1a", "#332f27", "#443f35", "#58544a", "#726c5e", "#928c78", "#b6b09a", "#ddd8cc"] },
+      "rule": { "role": "neutral", "displayName": "Rule Hairline", "canonical": "#ddd8cc", "tonalRamp": ["#847c66", "#9a917a", "#b1a78d", "#c8bfa4", "#ddd8cc", "#e9e5da", "#f2f0ea", "#fffdf9"] },
+      "flag-severe": { "role": "primary", "displayName": "Alarm Red", "canonical": "#b3261e", "tonalRamp": ["#3d0d0a", "#5e140f", "#801c15", "#a3241b", "#b3261e", "#cf4c40", "#e58a80", "#f6c9c3"] },
+      "flag-severe-tint": { "role": "primary", "displayName": "Alarm Red Tint", "canonical": "#fbeae9", "tonalRamp": ["#b3261e", "#cf4c40", "#e58a80", "#f0b1a9", "#f6c9c3", "#fadfda", "#fbeae9", "#fefaf9"] },
+      "flag-high": { "role": "secondary", "displayName": "Redline Amber", "canonical": "#9c5a12", "tonalRamp": ["#37200a", "#4f2d0d", "#6d3e0f", "#894c10", "#9c5a12", "#bd7a2e", "#dba05e", "#efc99b"] },
+      "flag-high-tint": { "role": "secondary", "displayName": "Redline Amber Tint", "canonical": "#fbf0e2", "tonalRamp": ["#9c5a12", "#bd7a2e", "#dba05e", "#eab97f", "#efc99b", "#f6dcbb", "#fbf0e2", "#fefaf5"] },
+      "confirm": { "role": "tertiary", "displayName": "Confirm Green", "canonical": "#2f6d4c", "tonalRamp": ["#0f2519", "#173a27", "#204d34", "#265f40", "#2f6d4c", "#4f8d6b", "#7fae91", "#bcd6c4"] },
+      "focus": { "role": "tertiary", "displayName": "Focus Blue", "canonical": "#1d5fd6", "tonalRamp": ["#0a1f4d", "#0f2f73", "#153f99", "#1a4fbd", "#1d5fd6", "#4d80e0", "#87a8ea", "#c4d5f5"] }
+    },
+    "typographyMeta": {
+      "document-lockup": { "displayName": "Document Lockup", "purpose": "Masthead wordmark, set in the document serif to declare the surface as a document." },
+      "document-body": { "displayName": "Document Body", "purpose": "Clause lead-in and flagged sentence text — the contract's own words." },
+      "quote": { "displayName": "Balloon Quote", "purpose": "Exact quoted clause inside a comment balloon, colored to severity." },
+      "chrome-body": { "displayName": "Chrome Body", "purpose": "Redline's own voice: tagline, advisory note, confirmation text." },
+      "chrome-label": { "displayName": "Chrome Label", "purpose": "Uppercase severity tag chip inside a comment balloon." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "bar-grow", "value": "scaleY(0) -> scaleY(1), 0.5s cubic-bezier(0.16,1,0.3,1)", "purpose": "Margin change-bar grows from the top, staggered per clause, severity-ordered (Severe before High)." },
+      { "name": "flag-in", "value": "color/text-decoration-color: ink -> severity color, 0.5s ease-out", "purpose": "The flagged sentence recolors from neutral ink to its severity color as it is marked up." },
+      { "name": "balloon-in", "value": "opacity 0->1, translateX(-10px)->none, 0.5s cubic-bezier(0.16,1,0.3,1)", "purpose": "Comment balloon slides in from the document edge, carrying the quoted clause." },
+      { "name": "stagger-step", "value": "0.4s per clause index, plus a 0.15s/0.45s/0.65s internal offset for bar/flag/balloon", "purpose": "Severity-ordered entrance: the most severe clause redlines itself first." }
+    ],
+    "breakpoints": [
+      { "name": "two-column", "value": "860px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button (CTA)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The page's single call to action, 'Try it on a document' — plain, high-contrast, no gradient or glow.",
+      "html": "<button class=\"ds-btn-primary\">Try it on a document</button>",
+      "css": ".ds-btn-primary { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1rem; font-weight: 600; color: #fffdf9; background: #1c1a16; border: none; border-radius: 3px; padding: 0.85rem 1.85rem; cursor: pointer; transition: background 0.15s ease; } .ds-btn-primary:hover { background: #b3261e; } .ds-btn-primary:focus-visible { outline: 2px solid #1d5fd6; outline-offset: 3px; border-radius: 2px; } .ds-btn-primary:disabled { background: #58544a; cursor: not-allowed; }"
+    },
+    {
+      "name": "Ghost Button (reset link)",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Text-only reset action ('Choose a different file'), underlined, no fill or border.",
+      "html": "<button class=\"ds-btn-ghost\">Choose a different file</button>",
+      "css": ".ds-btn-ghost { background: none; border: none; padding: 0; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 0.88rem; font-weight: 600; color: #1c1a16; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; } .ds-btn-ghost:hover { color: #b3261e; } .ds-btn-ghost:focus-visible { outline: 2px solid #1d5fd6; outline-offset: 3px; }"
+    },
+    {
+      "name": "Comment Balloon — Severe",
+      "kind": "custom",
+      "refersTo": "balloon-severe",
+      "description": "The signature annotation component: severity tag, exact quoted clause, and advisory note, pinned beside the flagged sentence.",
+      "html": "<div class=\"ds-balloon ds-balloon--severe\"><span class=\"ds-balloon-tag\">Severe</span><p class=\"ds-balloon-quote\">“all right, title, and interest therein shall vest exclusively in Client immediately upon creation, regardless of the payment status of any invoice issued hereunder.”</p><p class=\"ds-balloon-text\">This clause assigns your pre-existing tools and materials too, and the rights transfer the moment you create the work — before you've been paid. Ask for assignment on payment, and a carve-out for what you already owned.</p></div>",
+      "css": ".ds-balloon { background: #fbeae9; border: 1px solid #b3261e; border-radius: 4px; padding: 0.85rem 1rem; position: relative; } .ds-balloon-tag { display: inline-block; font-family: system-ui, sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #fffdf9; background: #b3261e; padding: 0.15rem 0.5rem; border-radius: 3px; } .ds-balloon-quote { font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 0.9rem; line-height: 1.45; color: #b3261e; margin-top: 0.6rem; } .ds-balloon-text { font-family: system-ui, sans-serif; font-size: 0.92rem; line-height: 1.5; color: #1c1a16; margin-top: 0.5rem; }"
+    },
+    {
+      "name": "Comment Balloon — High",
+      "kind": "custom",
+      "refersTo": "balloon-high",
+      "description": "Same balloon structure as Severe, recolored to the High severity tier (Redline Amber) — the decided second flag color.",
+      "html": "<div class=\"ds-balloon ds-balloon--high\"><span class=\"ds-balloon-tag\">High</span><p class=\"ds-balloon-quote\">“Client's sole discretion to approve, following delivery of the Work Product.”</p><p class=\"ds-balloon-text\">Payment is gated behind an open-ended approval step before the 90-day clock even starts. Ask for a fixed due date measured from delivery, not from approval.</p></div>",
+      "css": ".ds-balloon--high { background: #fbf0e2; border: 1px solid #9c5a12; border-radius: 4px; padding: 0.85rem 1rem; } .ds-balloon--high .ds-balloon-tag { background: #9c5a12; color: #fffdf9; } .ds-balloon--high .ds-balloon-quote { font-family: 'Source Serif 4', Georgia, serif; font-style: italic; color: #9c5a12; margin-top: 0.6rem; } .ds-balloon--high .ds-balloon-text { font-family: system-ui, sans-serif; color: #1c1a16; margin-top: 0.5rem; }"
+    },
+    {
+      "name": "Margin Change-Bar",
+      "kind": "custom",
+      "refersTo": "n/a",
+      "description": "The 4px severity-colored vertical mark beside a flagged sentence; grows from scaleY(0) on entrance.",
+      "html": "<div class=\"ds-flagged-row\"><span class=\"ds-bar\" aria-hidden=\"true\"></span><p class=\"ds-flagged-text\">all right, title, and interest therein shall vest exclusively in Client immediately upon creation...</p></div>",
+      "css": ".ds-flagged-row { display: grid; grid-template-columns: 4px 1fr; column-gap: 0.85rem; } .ds-bar { border-radius: 2px; background: #b3261e; transform-origin: top; } .ds-flagged-text { font-family: 'Source Serif 4', Georgia, serif; font-size: 1.05rem; line-height: 1.7; color: #b3261e; text-decoration-line: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }"
+    },
+    {
+      "name": "Masthead / Navigation",
+      "kind": "nav",
+      "refersTo": "n/a",
+      "description": "Sticky top bar carrying only the wordmark, set in the document serif, no nav links.",
+      "html": "<header class=\"ds-masthead\"><span class=\"ds-wordmark\">Redline</span></header>",
+      "css": ".ds-masthead { position: sticky; top: 0; z-index: 10; background: #fffdf9; border-bottom: 1px solid #ddd8cc; padding: 1rem 1.25rem; } .ds-wordmark { font-family: 'Source Serif 4', serif; font-weight: 600; font-size: 1.1rem; letter-spacing: -0.01em; color: #1c1a16; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Blackline",
+    "overview": "Redline's first surface is named after what it is: a Word/Google Docs track-changes markup — the industry term for a redlined contract comparison. There is no dashboard, no card grid, no \"AI analysis panel.\" The contract itself, rendered faithfully, is the interface: a margin change-bar, an underlined flagged sentence, and a comment balloon pinned by a leader line to the exact clause it concerns. The system exists to make one thing checkable at a glance — this points at my actual sentence — because wrong citations are the product's stated #1 trust problem to solve (PRODUCT.md, ADR 0001). The world is quiet on purpose. The one accent that's allowed to be loud is the flag itself; everything else — masthead, button, tagline — sits in restrained system-ui gray-on-cream so it never competes with the document being marked up. Confirmed rejection: no dashboard/verdict-card arrangement, no gradient or glow on the call-to-action, no card chrome wrapping the document (an explicit finish-review fix — body, masthead, and document now share one background rather than sitting in a boxed container).",
+    "keyCharacteristics": [
+      "Document-as-interface: no card wrapping the contract; the page background is the document's background.",
+      "One loud color family per severity tier, everywhere else restrained gray/cream.",
+      "Staggered, severity-ordered reveal: the redline marks itself in front of you.",
+      "A workmanlike document serif for contract text, quiet system-ui for everything that isn't the document."
+    ],
+    "rules": [
+      { "name": "The One Accent Per Tier Rule", "body": "A clause's margin bar, underlined sentence quote-in-balloon, and balloon border/tag all read in the same severity color (--sev-color), switched by a single data-severity attribute. No clause ever mixes tier colors within itself.", "section": "colors" },
+      { "name": "The One Document Face Rule", "body": "Any text that is the contract's own words is set in Source Serif 4. Any text that is Redline's own voice is set in system-ui. No third face, no display face.", "section": "typography" },
+      { "name": "The No-Card Rule", "body": "The document, masthead, and page body all share the same --page background with no bounding box, border, or shadow separating them — a finish-review correction to an earlier boxed-container treatment. Only the comment balloon and the after-select confirmation panel get a bounded surface.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do carry every severity tier in a single color pair (fill + tint), keyed off data-severity, never a one-off inline color.",
+      "Do set contract-text content (clause numbers, lead-in, flagged sentence, quoted excerpt) in the document serif; set Redline's own voice (labels, buttons, advisory notes) in system-ui.",
+      "Do let the document and its chrome share one background; a bounded box is reserved for an annotation (balloon) or a status panel (after-select), never for the document itself.",
+      "Do keep the CTA plain and high-contrast — ink fill, no gradient, no glow — per the direction contract's explicit instruction, with the alarm-red hover as the only departure."
+    ],
+    "donts": [
+      "Don't introduce a third severity color, a dashboard/verdict-card layout, or a boxed document container — all three are confirmed rejections of this surface's own direction contract and finish review.",
+      "Don't apply a drop shadow or elevation lift anywhere; this system conveys grouping with hairline rules and tint/border fills only.",
+      "Don't treat --confirm (green) or --focus (blue) as decorative — green is reserved for the not-yet-built \"confirmed present protection\" state (ADR 0006) and blue is the live focus ring; neither is a free-choice accent color.",
+      "Don't set UI chrome (labels, buttons, nav) in the document serif, and don't set contract text in system-ui — the pairing's whole job is to keep the two registers visually distinct."
+    ]
+  }
+}
