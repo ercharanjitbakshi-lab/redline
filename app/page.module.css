@@ -1,0 +1,286 @@
+.page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--page);
+  border-bottom: 1px solid var(--rule);
+  padding: 1rem 1.25rem;
+}
+
+.wordmark {
+  font-family: var(--font-document), serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1.25rem 3.5rem;
+}
+
+.document {
+  width: 100%;
+  max-width: 44rem;
+  padding: 1.5rem clamp(1.25rem, 4vw, 3rem) 2.25rem;
+  font-family: var(--font-document), Georgia, serif;
+}
+
+.clause {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.clause + .clause {
+  margin-top: 2.25rem;
+  padding-top: 2.25rem;
+  border-top: 1px solid var(--rule);
+}
+
+.clause[data-severity="severe"] {
+  --sev-color: var(--flag-severe);
+  --sev-tint: var(--flag-severe-tint);
+}
+
+.clause[data-severity="high"] {
+  --sev-color: var(--flag-high);
+  --sev-tint: var(--flag-high-tint);
+}
+
+.clauseDoc {
+  min-width: 0;
+}
+
+.lead {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+  max-width: 68ch;
+}
+
+.clauseNumber {
+  font-weight: 700;
+}
+
+.flaggedRow {
+  display: grid;
+  grid-template-columns: 4px 1fr;
+  column-gap: 0.85rem;
+  margin-top: 0.9rem;
+}
+
+.bar {
+  border-radius: 2px;
+  background: var(--sev-color);
+  transform-origin: top;
+  animation: barGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--stagger, 0s) + 0.15s);
+}
+
+.flaggedText {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 68ch;
+}
+
+.flag {
+  font-weight: 500;
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  color: var(--ink);
+  text-decoration-color: var(--ink);
+  animation: flagIn 0.5s ease-out both;
+  animation-delay: calc(var(--stagger, 0s) + 0.45s);
+}
+
+.balloon {
+  background: var(--sev-tint);
+  border: 1px solid var(--sev-color);
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  position: relative;
+  opacity: 0;
+  animation: balloonIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--stagger, 0s) + 0.65s);
+}
+
+.balloonTag {
+  display: inline-block;
+  font-family: system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--page);
+  background: var(--sev-color);
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+}
+
+.balloonQuote {
+  font-family: var(--font-document), Georgia, serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--sev-color);
+  margin-top: 0.6rem;
+}
+
+.balloonText {
+  font-family: system-ui, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink);
+  margin-top: 0.5rem;
+}
+
+.caption {
+  font-family: system-ui, sans-serif;
+  font-size: 0.78rem;
+  color: var(--ink-quiet);
+  margin-top: 1.75rem;
+}
+
+.pitch {
+  width: 100%;
+  max-width: 34rem;
+  margin: 2.75rem auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  text-align: center;
+}
+
+.tagline {
+  font-family: system-ui, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--ink-quiet);
+  max-width: 42ch;
+}
+
+.cta {
+  font-family: system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--page);
+  background: var(--ink);
+  border: none;
+  border-radius: 3px;
+  padding: 0.85rem 1.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.cta:hover {
+  background: var(--flag-severe);
+}
+
+.cta:disabled {
+  background: var(--ink-quiet);
+  cursor: not-allowed;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.afterSelect {
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1.1rem 1.25rem;
+  font-family: system-ui, sans-serif;
+}
+
+.afterSelect p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.reset {
+  margin-top: 0.75rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.reset:hover {
+  color: var(--flag-severe);
+}
+
+@keyframes barGrow {
+  0% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes flagIn {
+  0% {
+    color: var(--ink);
+    text-decoration-color: var(--ink);
+  }
+  100% {
+    color: var(--sev-color);
+    text-decoration-color: var(--sev-color);
+  }
+}
+
+@keyframes balloonIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (min-width: 860px) {
+  .clause {
+    grid-template-columns: 1fr 17rem;
+    column-gap: 2rem;
+    align-items: start;
+  }
+
+  .balloon::before {
+    content: "";
+    position: absolute;
+    left: -1.85rem;
+    top: 1.35rem;
+    width: 1.4rem;
+    height: 2px;
+    background: var(--sev-color);
+  }
+}
