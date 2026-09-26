@@ -207,3 +207,273 @@
   border-radius: 4px;
   padding: 1.5rem 1.25rem;
 }
+
+/* ── Analysis ─────────────────────────────────────────── */
+
+.analyze {
+  margin: 1.5rem 0 2.5rem;
+}
+
+.secondary {
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--ink-quiet);
+  border-radius: 3px;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+}
+
+.secondary:hover {
+  color: var(--flag-severe);
+  border-color: var(--flag-severe);
+}
+
+.secondary:disabled {
+  color: var(--ink-quiet);
+  border-color: var(--rule);
+  cursor: progress;
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-quiet);
+  margin: 2.25rem 0 0.85rem;
+}
+
+.report > section:first-child .label {
+  margin-top: 0;
+}
+
+.summary {
+  line-height: 1.6;
+}
+
+.verdict {
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.45;
+  margin-top: 1.5rem;
+}
+
+.flags,
+.protections,
+.contextNotes {
+  list-style: none;
+  display: grid;
+  gap: 1rem;
+}
+
+/* A flag reads like a comment balloon pinned to its sentence. */
+.flag {
+  background: var(--page);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--flag-accent);
+  border-radius: 4px;
+  padding: 1rem 1.1rem;
+}
+
+.flag-severe {
+  --flag-accent: var(--flag-severe);
+  --flag-tint: var(--flag-severe-tint);
+}
+
+.flag-high {
+  --flag-accent: var(--flag-high);
+  --flag-tint: var(--flag-high-tint);
+}
+
+.flag-moderate {
+  --flag-accent: var(--ink-quiet);
+  --flag-tint: var(--paper);
+}
+
+.flagTags {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.tag,
+.tagRedLine {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  padding: 0.25rem 0.45rem;
+}
+
+.tag {
+  color: var(--page);
+  background: var(--flag-accent);
+}
+
+.tagRedLine {
+  color: var(--flag-accent);
+  border: 1px solid var(--flag-accent);
+}
+
+/* The contract's words: document serif, severity tint. */
+.quote,
+.quoteQuiet {
+  font-family: var(--font-document), serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.quote {
+  background: var(--flag-tint);
+  padding: 0.6rem 0.75rem;
+  border-radius: 2px;
+}
+
+.quoteQuiet {
+  color: var(--ink-quiet);
+  border-left: 3px solid var(--rule);
+  padding-left: 0.75rem;
+}
+
+.explanation {
+  line-height: 1.55;
+  margin-top: 0.7rem;
+}
+
+.jump {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--ink-quiet);
+  margin-top: 0.6rem;
+}
+
+.jump:hover {
+  color: var(--flag-severe);
+}
+
+/* "Not in this contract" is a different kind of claim, so it looks
+   different: no quotes, no severity colours, a ruled box of its own. */
+.missing {
+  margin-top: 2.25rem;
+  border: 1px dashed var(--ink-quiet);
+  border-radius: 4px;
+  padding: 1.25rem 1.1rem;
+}
+
+.missingHeading {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.missingIntro {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink-quiet);
+  margin: 0.35rem 0 1rem;
+}
+
+.protections li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.75rem;
+  align-items: baseline;
+}
+
+.status {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.protection-absent .status {
+  color: var(--flag-severe);
+}
+
+.protection-partial .status {
+  color: var(--flag-high);
+}
+
+.protection-present .status {
+  color: var(--confirm);
+}
+
+.protectionName {
+  font-weight: 600;
+}
+
+.protectionNote {
+  grid-column: 2;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-top: 0.25rem;
+}
+
+.protection-present .protectionNote {
+  color: var(--ink-quiet);
+}
+
+.checks {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: var(--ink-quiet);
+}
+
+.checks summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.checks ul {
+  margin: 0.6rem 0 0 1.25rem;
+  line-height: 1.7;
+}
+
+/* Flagged sentences inside the contract text. */
+.anchor {
+  scroll-margin-top: 5rem;
+}
+
+.mark-severe,
+.mark-high,
+.mark-moderate {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.mark-severe {
+  background: var(--flag-severe-tint);
+  text-decoration-color: var(--flag-severe);
+}
+
+.mark-high {
+  background: var(--flag-high-tint);
+  text-decoration-color: var(--flag-high);
+}
+
+.mark-moderate {
+  background: var(--paper);
+  text-decoration-color: var(--ink-quiet);
+}
+
+.anchor:target + mark {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .protections li {
+    grid-template-columns: 1fr;
+  }
+
+  .protectionNote {
+    grid-column: 1;
+  }
+}
