@@ -1,6 +1,7 @@
 import type { Prompt } from "../model/client.ts";
 import { clauseLibrary } from "./clause-library.ts";
 import { protectionChecklist } from "./protection-checklist.ts";
+import type { RedLine } from "./report.ts";
 
 // The instructions the model works from. The model's job is judgment: which
 // clauses fail the asymmetry test, which category each belongs to, and what
@@ -41,6 +42,7 @@ ${categoryGuide}
 Rules for every finding:
 - sourceSentence is copied character for character from the contract: the one sentence that carries the problem. Same words, punctuation and capitals. Do not paraphrase, shorten with "...", fix typos, or join text from different places.
 - If one sentence has problems in two categories, report it once per category.
+- redLineId is the id of the freelancer's red line the clause breaks (see below), or null.
 - explanation says what the clause does to the freelancer and what to ask for instead, in two or three plain sentences. Write to the freelancer as "you" and to the other party as "the client". State it directly. Never use hedge words such as "may", "might", "could", "potentially" or "arguably".
   Example: "This clause gives the client ownership of the work the moment you create it, before you're paid. If they don't pay, you can't withhold the work. Ask for ownership to pass on full payment."
 
@@ -52,12 +54,22 @@ ${protectionGuide}
 Also write summary: a plain-English paragraph of at most 150 words on what the contract is, who it binds, and what the freelancer agrees to. Describe; do not judge.
 
 Reply with JSON only, no other text:
-{"summary": string, "findings": [{"category": string, "sourceSentence": string, "explanation": string}], "protections": [{"key": string, "status": "present" | "absent" | "partial", "note": string}]}
+{"summary": string, "findings": [{"category": string, "sourceSentence": string, "explanation": string, "redLineId": string | null}], "protections": [{"key": string, "status": "present" | "absent" | "partial", "note": string}]}
 If nothing needs flagging and nothing is context, findings is []. protections always has one entry per protection.`;
 
-export function buildPrompt(documentText: string): Prompt {
+// Red lines are rules the freelancer set in advance. A breach is always
+// reported, whether or not the clause fails the asymmetry test.
+function redLineSection(redLines: RedLine[]): string {
+  if (redLines.length === 0) return "The freelancer has set no red lines. redLineId is null on every finding.";
+  const list = redLines.map((r) => `<red-line id="${r.id}">${r.text}</red-line>`).join("\n");
+  return `The freelancer's red lines. For every clause that breaks one, report a finding with that redLineId, even if the clause passes the asymmetry test or is normally context only. Use the matching category above if there is one; if none fits, use category "red-line". Explain which rule it breaks and why.
+
+${list}`;
+}
+
+export function buildPrompt(documentText: string, redLines: RedLine[]): Prompt {
   return {
     system,
-    user: `The contract:\n\n<contract>\n${documentText}\n</contract>`,
+    user: `${redLineSection(redLines)}\n\nThe contract:\n\n<contract>\n${documentText}\n</contract>`,
   };
 }

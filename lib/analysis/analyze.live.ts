@@ -18,7 +18,10 @@ const model = await createOpenRouterClient({
 function show(label: string, report: Report) {
   console.log(`\n── ${label} ──`);
   console.log(`summary: ${report.summary}`);
-  for (const f of report.flags) console.log(`  [${f.severity}] ${f.category}: "${f.sourceSentence}"\n      ${f.explanation}`);
+  for (const f of report.flags) {
+    const redLine = f.hitsRedLine ? ` (red line ${f.hitsRedLine})` : "";
+    console.log(`  [${f.severity}] ${f.category}${redLine}: "${f.sourceSentence}"\n      ${f.explanation}`);
+  }
   for (const n of report.contextNotes) console.log(`  (context) ${n.category}: "${n.sourceSentence}"`);
   for (const e of report.notInContract) console.log(`  <${e.status}> ${e.key}: ${e.note}`);
   console.log(`clean: ${report.clean}, dropped: ${report.droppedFlagCount}`);
@@ -68,4 +71,27 @@ test("live: protections in unusual wording are not reported absent", async () =>
   show("unusual wording contract", report);
   const absent = report.notInContract.filter((e) => e.status === "absent").map((e) => e.key);
   assert.deepEqual(absent, [], "every protection is here, in unusual words");
+});
+
+test("live: red lines in the user's own words are matched to the clauses that break them", async () => {
+  const redLines = [
+    { id: "rl-compete", text: "I don't sign non-competes." },
+    { id: "rl-digital", text: "Final files are delivered digitally, never on physical media." },
+    { id: "rl-renewal", text: "No automatic renewal." },
+  ];
+  const report = await analyze({ documentText: oneSidedContract, redLines }, { model });
+  show("one-sided contract with red lines", report);
+  const hit = (id: string) => report.flags.filter((f) => f.hitsRedLine === id);
+
+  const compete = hit("rl-compete");
+  assert.equal(compete.length, 1, "the non-compete breaks rl-compete");
+  assert.equal(compete[0].severity, "high", "moderate non-compete raised to high");
+  assert.match(compete[0].sourceSentence, /twelve \(12\) months/);
+
+  const digital = hit("rl-digital");
+  assert.equal(digital.length, 1, "the USB clause breaks rl-digital");
+  assert.match(digital[0].sourceSentence, /USB drive/);
+  assert.equal(digital[0].severity, "high");
+
+  assert.equal(hit("rl-renewal").length, 0, "nothing in the contract renews automatically");
 });

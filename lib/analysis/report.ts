@@ -9,7 +9,8 @@ export type Flag = {
   // Verbatim from the document, whitespace collapsed (docs/adr/0001).
   sourceSentence: string;
   severity: FlagSeverity;
-  // A clause-library key.
+  // A clause-library key, or "red-line" for a clause that breaks one of the
+  // user's red lines without fitting any built-in category.
   category: string;
   // Redline's own judgment, in its own voice (docs/adr/0004, 0005).
   explanation: string;
@@ -37,7 +38,7 @@ export type ProtectionEntry = {
   note: string;
 };
 
-export type Check = { kind: "clause" | "protection"; key: string; name: string };
+export type Check = { kind: "clause" | "protection" | "red-line"; key: string; name: string };
 
 export type Report = {
   summary: string;
