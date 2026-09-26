@@ -6,7 +6,13 @@ import styles from "./auth.module.css";
 
 type Mode = "sign-in" | "sign-up";
 
-export default function LoginForm({ initialError }: { initialError?: string }) {
+export default function LoginForm({
+  initialError,
+  initialNotice,
+}: {
+  initialError?: string;
+  initialNotice?: string;
+}) {
   const [mode, setMode] = useState<Mode>("sign-in");
 
   return mode === "sign-in" ? (
@@ -17,6 +23,7 @@ export default function LoginForm({ initialError }: { initialError?: string }) {
       pendingLabel="Signing in…"
       action={signIn}
       initialError={initialError}
+      initialNotice={initialNotice}
       passwordAutoComplete="current-password"
       switchPrompt="New to Redline?"
       switchLabel="Create an account"
@@ -44,6 +51,7 @@ function AuthForm(props: {
   pendingLabel: string;
   action: typeof signIn;
   initialError?: string;
+  initialNotice?: string;
   passwordAutoComplete: string;
   passwordHint?: string;
   switchPrompt: string;
@@ -52,7 +60,9 @@ function AuthForm(props: {
 }) {
   const [state, action, pending] = useActionState(
     props.action,
-    props.initialError ? { error: props.initialError } : undefined,
+    props.initialError || props.initialNotice
+      ? { error: props.initialError, notice: props.initialNotice }
+      : undefined,
   );
 
   return (

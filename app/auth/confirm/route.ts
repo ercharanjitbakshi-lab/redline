@@ -5,6 +5,12 @@ import { createClient } from "@/lib/supabase/server";
 // The confirmation link in the sign-up email lands here. Supabase sends
 // either a `code` (the default email template) or a `token_hash` (a custom
 // template); both end with a session cookie set on this response.
+//
+// A `code` can only be exchanged in the browser that signed up, because
+// that browser holds the PKCE verifier cookie. Supabase has already
+// confirmed the email by the time it redirects here, so when the link is
+// opened on another device or browser, the account is confirmed and the
+// user just needs to sign in.
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const code = searchParams.get("code");
@@ -12,14 +18,16 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type") as EmailOtpType | null;
 
   const supabase = await createClient();
-  let ok = false;
+  let destination = "/login?confirm=failed";
 
   if (code) {
-    ok = !(await supabase.auth.exchangeCodeForSession(code)).error;
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) destination = "/documents";
+    else if (error.code === "pkce_code_verifier_not_found") destination = "/login?confirm=done";
   } else if (tokenHash && type) {
-    ok = !(await supabase.auth.verifyOtp({ type, token_hash: tokenHash })).error;
+    const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
+    if (!error) destination = "/documents";
   }
 
-  const destination = ok ? "/documents" : "/login?confirm=failed";
   return NextResponse.redirect(new URL(destination, request.url));
 }
