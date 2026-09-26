@@ -5,7 +5,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { analyze } from "./analyze.ts";
-import { fairContract, oneSidedContract } from "./fixtures.ts";
+import { fairContract, oneSidedContract, unusualWordingContract } from "./fixtures.ts";
 import { modelConfig } from "../model/config.ts";
 import { createOpenRouterClient } from "../model/openrouter.ts";
 import type { Report } from "./report.ts";
@@ -20,6 +20,7 @@ function show(label: string, report: Report) {
   console.log(`summary: ${report.summary}`);
   for (const f of report.flags) console.log(`  [${f.severity}] ${f.category}: "${f.sourceSentence}"\n      ${f.explanation}`);
   for (const n of report.contextNotes) console.log(`  (context) ${n.category}: "${n.sourceSentence}"`);
+  for (const e of report.notInContract) console.log(`  <${e.status}> ${e.key}: ${e.note}`);
   console.log(`clean: ${report.clean}, dropped: ${report.droppedFlagCount}`);
 }
 
@@ -44,6 +45,13 @@ test("live: the one-sided contract flags what a reviewer would, and only that", 
   assert.ok(!report.flags.some((f) => /USB drive/.test(f.sourceSentence)), "the USB clause is unusual, not dangerous");
   assert.ok(!report.flags.some((f) => /final logo/.test(f.sourceSentence)), "plain work-for-hire is not a flag");
   assert.equal(report.flags[0].severity, "severe");
+
+  const status = Object.fromEntries(report.notInContract.map((e) => [e.key, e.status]));
+  for (const key of ["liability-cap", "pre-existing-ip-carve-out", "payment-on-termination", "acceptance-window"]) {
+    assert.equal(status[key], "absent", `${key} is missing from this contract`);
+  }
+  // Net 90 is a deadline of sorts, with nothing for missing it.
+  assert.notEqual(status["payment-deadline"], "present");
 });
 
 test("live: the fair contract comes back clean", async () => {
@@ -51,4 +59,13 @@ test("live: the fair contract comes back clean", async () => {
   show("fair contract", report);
   assert.equal(report.clean, true, `unexpected flags: ${report.flags.map((f) => f.category).join(", ")}`);
   assert.ok(report.checksRun.length > 0);
+  const absent = report.notInContract.filter((e) => e.status === "absent").map((e) => e.key);
+  assert.deepEqual(absent, [], "every protection is in the fair contract");
+});
+
+test("live: protections in unusual wording are not reported absent", async () => {
+  const report = await analyze({ documentText: unusualWordingContract, redLines: [] }, { model });
+  show("unusual wording contract", report);
+  const absent = report.notInContract.filter((e) => e.status === "absent").map((e) => e.key);
+  assert.deepEqual(absent, [], "every protection is here, in unusual words");
 });

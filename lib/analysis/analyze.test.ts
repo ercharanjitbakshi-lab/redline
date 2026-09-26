@@ -3,11 +3,15 @@ import assert from "node:assert/strict";
 import { analyze } from "./analyze.ts";
 import { createFakeModelClient } from "../model/fake.ts";
 import { fairContract, oneSidedContract } from "./fixtures.ts";
+import { protectionChecklist } from "./protection-checklist.ts";
 
 type Finding = { category: string; sourceSentence: string; explanation: string };
 
+// Every protection answered, so these tests can focus on flags.
+const protections = protectionChecklist.map((p) => ({ key: p.key, status: "present", note: "Covered." }));
+
 const modelSays = (findings: Finding[], summary = "A brand identity contract.") =>
-  createFakeModelClient(JSON.stringify({ summary, findings }));
+  createFakeModelClient(JSON.stringify({ summary, findings, protections }));
 
 const run = (model: ReturnType<typeof createFakeModelClient>, documentText = oneSidedContract) =>
   analyze({ documentText, redLines: [] }, { model });
@@ -75,6 +79,7 @@ test("severity comes from the clause library, not from the model", async () => {
       JSON.stringify({
         summary: "s",
         findings: [{ category: "non-compete-exclusivity-non-solicit", sourceSentence: quotes.nonCompete, explanation: "e", severity: "severe" }],
+        protections,
       }),
     ),
   );
@@ -152,7 +157,7 @@ test("a fair contract is clean, with no flags and every check listed", async () 
   assert.equal(report.clean, true);
   assert.deepEqual(report.flags, []);
   assert.equal(report.summary, "Six blog posts on fair terms.");
-  assert.deepEqual(report.checksRun.map((c) => c.key), [
+  assert.deepEqual(report.checksRun.filter((c) => c.kind === "clause").map((c) => c.key), [
     "ip-pre-existing-work",
     "ip-vests-before-payment",
     "ip-moral-or-portfolio-rights",
@@ -168,7 +173,7 @@ test("a fair contract is clean, with no flags and every check listed", async () 
 
 test("checks are listed even when flags are found", async () => {
   const report = await run(modelSays(fullFindings));
-  assert.equal(report.checksRun.length, 9);
+  assert.equal(report.checksRun.filter((c) => c.kind === "clause").length, 9);
 });
 
 test("clean is true exactly when every proposed flag was dropped", async () => {
@@ -196,22 +201,22 @@ test("one sentence can carry flags in two categories", async () => {
 });
 
 test("the same input and model output give an identical report five times", async () => {
-  const reply = JSON.stringify({ summary: "s", findings: fullFindings });
+  const reply = JSON.stringify({ summary: "s", findings: fullFindings, protections });
   const reports = [];
   for (let i = 0; i < 5; i++) reports.push(await run(createFakeModelClient(reply)));
   for (const report of reports.slice(1)) assert.deepEqual(report, reports[0]);
 });
 
 test("model JSON wrapped in a code fence is still read", async () => {
-  const fenced = "```json\n" + JSON.stringify({ summary: "s", findings: [fullFindings[3]] }) + "\n```";
+  const fenced = "```json\n" + JSON.stringify({ summary: "s", findings: [fullFindings[3]], protections }) + "\n```";
   const report = await run(createFakeModelClient(fenced));
   assert.equal(report.flags.length, 1);
 });
 
 test("unreadable model output fails the analysis instead of returning a clean report", async () => {
   await assert.rejects(run(createFakeModelClient("Sorry, I can't help with that.")), /could not be read/);
-  await assert.rejects(run(createFakeModelClient(JSON.stringify({ findings: [] }))), /could not be read/);
-  await assert.rejects(run(createFakeModelClient(JSON.stringify({ summary: "s" }))), /could not be read/);
+  await assert.rejects(run(createFakeModelClient(JSON.stringify({ findings: [], protections }))), /could not be read/);
+  await assert.rejects(run(createFakeModelClient(JSON.stringify({ summary: "s", protections }))), /could not be read/);
 });
 
 test("an empty document is refused before calling the model", async () => {

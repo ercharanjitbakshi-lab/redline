@@ -79,3 +79,37 @@ of 25% of the remaining fees.
 6. Liability. Each party's total liability under this Agreement is limited to
 the fees paid under it, and neither party is liable for indirect losses.
 `;
+
+// Every protection on the checklist is here, but none in template wording.
+// A reviewer would mark all five present:
+//   liability cap          → "aggregate exposure ... shall not exceed the sums ... remitted"
+//   payment deadline       → "settle ... inside a fortnight", then a 1.5% monthly surcharge
+//   pre-existing IP        → "Studio Kit" stays with Studio, Client gets a licence
+//   payment on termination → "calling a halt" pays for everything done, plus a third
+//   acceptance window      → "silence for seven days" is sign-off
+export const unusualWordingContract = `STUDIO ENGAGEMENT LETTER
+
+A. What we'll make. Studio will produce an animated explainer for Client, as
+described in the attached brief.
+
+B. Studio Kit. Anything Studio brought to this job or uses across its work,
+including rigs, brushes, scripts, and character templates (the "Studio Kit"),
+remains Studio's. Client receives a permanent licence to use the Studio Kit as
+it appears inside the finished explainer, and for nothing else.
+
+C. Settling up. Client will settle each bill inside a fortnight of receiving
+it. Anything left unsettled after that attracts a surcharge of 1.5% for each
+month it stays open, and Studio may down tools until it is settled.
+
+D. Sign-off. Client reviews each cut and replies with notes or sign-off.
+Silence for seven days after a cut is delivered counts as sign-off.
+
+E. Calling a halt. Either side can call a halt to the project in writing. If
+Client calls a halt, Client pays for everything done up to that day and one
+third of the fees for the work not yet started.
+
+F. How far Studio's exposure goes. However a claim arises, Studio's aggregate
+exposure under this letter shall not exceed the sums Client has actually
+remitted to Studio, and Studio carries no exposure for lost profits or other
+knock-on losses.
+`;

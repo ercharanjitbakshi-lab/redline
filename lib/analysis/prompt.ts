@@ -1,5 +1,6 @@
 import type { Prompt } from "../model/client.ts";
 import { clauseLibrary } from "./clause-library.ts";
+import { protectionChecklist } from "./protection-checklist.ts";
 
 // The instructions the model works from. The model's job is judgment: which
 // clauses fail the asymmetry test, which category each belongs to, and what
@@ -13,6 +14,17 @@ const categoryGuide = clauseLibrary
       `  Looks like: ${c.looksLike}`,
       `  Why: ${c.rationale}`,
       `  Fine when: ${c.notWhen}`,
+    ].join("\n"),
+  )
+  .join("\n");
+
+const protectionGuide = protectionChecklist
+  .map((p) =>
+    [
+      `- ${p.key}: ${p.name}`,
+      `  Without it: ${p.protectsAgainst}`,
+      `  Present when: ${p.presentWhen}`,
+      `  Partial when: ${p.partialWhen}`,
     ].join("\n"),
   )
   .join("\n");
@@ -32,11 +44,16 @@ Rules for every finding:
 - explanation says what the clause does to the freelancer and what to ask for instead, in two or three plain sentences. Write to the freelancer as "you" and to the other party as "the client". State it directly. Never use hedge words such as "may", "might", "could", "potentially" or "arguably".
   Example: "This clause gives the client ownership of the work the moment you create it, before you're paid. If they don't pay, you can't withhold the work. Ask for ownership to pass on full payment."
 
+Then check the contract for each protection below. Judge by what the contract does, not its wording: a protection in unusual words is still present. Status is "present", "absent" or "partial". The note is one or two plain sentences to the freelancer as "you": for absent, say what is missing and what that leaves you exposed to; for partial, say what is covered and what is not; for present, say briefly what the contract gives you. Do not quote the contract in notes. Same rule on hedge words.
+
+Protections (use these keys, one entry each):
+${protectionGuide}
+
 Also write summary: a plain-English paragraph of at most 150 words on what the contract is, who it binds, and what the freelancer agrees to. Describe; do not judge.
 
 Reply with JSON only, no other text:
-{"summary": string, "findings": [{"category": string, "sourceSentence": string, "explanation": string}]}
-If nothing needs flagging and nothing is context, findings is [].`;
+{"summary": string, "findings": [{"category": string, "sourceSentence": string, "explanation": string}], "protections": [{"key": string, "status": "present" | "absent" | "partial", "note": string}]}
+If nothing needs flagging and nothing is context, findings is []. protections always has one entry per protection.`;
 
 export function buildPrompt(documentText: string): Prompt {
   return {
