@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { signOut } from "../login/actions";
-import styles from "../login/auth.module.css";
+import Masthead from "./masthead";
+import UploadButton from "./upload-button";
+import styles from "./documents.module.css";
 
-// The saved library will live here. For now it confirms who is signed in.
+const dateFormat = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" });
+
 export default async function DocumentsPage() {
   const supabase = await createClient();
   const {
@@ -13,25 +15,35 @@ export default async function DocumentsPage() {
   // The proxy already redirects signed-out visitors; this guards the page itself.
   if (!user) redirect("/login");
 
+  const { data: documents, error } = await supabase
+    .from("documents")
+    .select("id, title, created_at")
+    .order("created_at", { ascending: false });
+
   return (
     <div className={styles.page}>
-      <header className={styles.masthead}>
-        <Link href="/" className={styles.wordmark}>
-          Redline
-        </Link>
-        <div className={styles.account}>
-          <span>{user.email}</span>
-          <form action={signOut}>
-            <button type="submit" className={styles.link}>
-              Sign out
-            </button>
-          </form>
-        </div>
-      </header>
+      <Masthead email={user.email} />
       <main className={styles.main}>
         <div className={styles.content}>
           <h1 className={styles.heading}>Your documents</h1>
-          <p className={styles.empty}>No documents yet. Contracts you review will be saved here.</p>
+          <UploadButton />
+
+          {error ? (
+            <p className={styles.error}>We couldn&apos;t load your documents. Refresh to try again.</p>
+          ) : documents.length === 0 ? (
+            <p className={styles.empty}>No documents yet. Contracts you upload will be saved here.</p>
+          ) : (
+            <ul className={styles.list}>
+              {documents.map((doc) => (
+                <li key={doc.id}>
+                  <Link href={`/documents/${doc.id}`} className={styles.item}>
+                    <span className={styles.itemTitle}>{doc.title}</span>
+                    <span className={styles.itemDate}>{dateFormat.format(new Date(doc.created_at))}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </main>
     </div>

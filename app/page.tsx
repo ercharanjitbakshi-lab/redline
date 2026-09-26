@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
 import styles from "./page.module.css";
 
 const CLAUSES = [
@@ -29,9 +28,6 @@ const CLAUSES = [
 ];
 
 export default function Home() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-
   return (
     <div className={styles.page}>
       <header className={styles.masthead}>
@@ -80,45 +76,9 @@ export default function Home() {
             drafts the counter-offer you can send back.
           </p>
 
-          {fileName === null ? (
-            <>
-              <button
-                type="button"
-                className={styles.cta}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                Try it on a document
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.docx"
-                className={styles.visuallyHidden}
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) setFileName(file.name);
-                }}
-              />
-            </>
-          ) : (
-            <div className={styles.afterSelect}>
-              <p>
-                You picked <strong>{fileName}</strong>. Uploads aren&apos;t
-                wired up yet — you just watched Redline read a clause the
-                way it would read yours.
-              </p>
-              <button
-                type="button"
-                className={styles.reset}
-                onClick={() => {
-                  setFileName(null);
-                  if (fileInputRef.current) fileInputRef.current.value = "";
-                }}
-              >
-                Choose a different file
-              </button>
-            </div>
-          )}
+          <Link href="/documents" className={styles.cta}>
+            Try it on a document
+          </Link>
         </section>
       </main>
     </div>

@@ -195,6 +195,8 @@
   border-radius: 3px;
   padding: 0.85rem 1.85rem;
   cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
   transition: background 0.15s ease;
 }
 
@@ -207,47 +209,10 @@
   cursor: not-allowed;
 }
 
-.visuallyHidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
 
-.afterSelect {
-  width: 100%;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 4px;
-  padding: 1.1rem 1.25rem;
-  font-family: system-ui, sans-serif;
-}
 
-.afterSelect p {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: var(--ink);
-}
 
-.reset {
-  margin-top: 0.75rem;
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: system-ui, sans-serif;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--ink);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  cursor: pointer;
-}
 
-.reset:hover {
-  color: var(--flag-severe);
-}
 
 @keyframes barGrow {
   0% {
