@@ -22,21 +22,51 @@ de-duplication, or severity assignment.
 **Blocked by:** 01 (citation verifier), 02 (clause library & checklist), 03
 (model client)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Given a fixture contract and a fake model response, `analyze()` returns
+- [x] Given a fixture contract and a fake model response, `analyze()` returns
       a summary, and flags ordered most-severe-first, each carrying its
       source sentence, severity, category, and explanation.
-- [ ] A flag whose proposed source sentence fails the citation verifier is
+- [x] A flag whose proposed source sentence fails the citation verifier is
       absent from the Report, and `droppedFlagCount` reflects the drop.
-- [ ] A standard-but-one-sided clause is still flagged — being common is not
+- [x] A standard-but-one-sided clause is still flagged — being common is not
       a defence — and an unusual-but-harmless clause is not flagged.
-- [ ] A plain work-for-hire assignment of the deliverable appears in
+- [x] A plain work-for-hire assignment of the deliverable appears in
       `contextNotes`, not `flags`.
-- [ ] A contract a competent reviewer judged fair produces `clean: true`, an
+- [x] A contract a competent reviewer judged fair produces `clean: true`, an
       empty `flags` list, and a populated `checksRun` — never an invented
       flag to avoid a bare result.
-- [ ] The same fixture and fixed model output, run five times, produce an
+- [x] The same fixture and fixed model output, run five times, produce an
       identical Report.
-- [ ] Tests assert only on the returned `Report` — not on prompt strings,
+- [x] Tests assert only on the returned `Report` — not on prompt strings,
       call counts, or internal clause-matching structures.
+
+## Comments
+
+Implemented as `analyze(input, { model })` in `lib/analysis/analyze.ts`, with
+the Report types in `report.ts`, the model instructions in `prompt.ts`, and
+annotated fixtures in `fixtures.ts`. 18 tests in `analyze.test.ts` against the
+fake model; `analyze.live.ts` runs the same fixtures against the real pinned
+model (`npm run test:live`).
+
+How it works: the model proposes `{ summary, findings: [{ category,
+sourceSentence, explanation }] }` as JSON. Code does the rest: citation check,
+severity from the clause library (a severity the model sends is ignored),
+flags vs context notes, de-duplication, and ordering (severity, then position
+in the document, then clause-library order).
+
+Decisions to review:
+- `droppedFlagCount` also counts proposals with a category Redline does not
+  recognise, not only failed quotes. Both are flags the user never sees.
+- Context notes are citation-checked too; a failed one is left out but not
+  counted (it was never a flag).
+- Unreadable model output throws. It never becomes an empty, clean Report.
+- `checksRun` lists the nine flaggable categories for now; ticket 05 adds the
+  protection checklist.
+- `redLines` is accepted and ignored; `hitsRedLine` is always null until 06.
+
+Live run, 2026-09-26, Claude Sonnet 5: the one-sided fixture produced exactly
+the six annotated flags at the annotated severities (net-90 flagged as
+standard-but-one-sided, USB delivery clause not flagged), work-for-hire and
+confidentiality as context notes, 0 dropped. The fair fixture came back clean.
+Explanations address the freelancer as "you" per ADR 0005.

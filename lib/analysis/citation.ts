@@ -4,13 +4,19 @@
 // extraction break lines and pad spaces unpredictably. Everything else —
 // words, punctuation, case — must match exactly. No fuzzy matching.
 
-function normalizeWhitespace(text: string): string {
+export function normalizeWhitespace(text: string): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
-export function appearsVerbatim(candidate: string, documentText: string): boolean {
+// Where the candidate starts in the whitespace-normalised document, or -1 if
+// it does not appear verbatim.
+export function locateVerbatim(candidate: string, documentText: string): number {
   const sentence = normalizeWhitespace(candidate);
   // An empty quote would match every document; it cites nothing.
-  if (sentence === "") return false;
-  return normalizeWhitespace(documentText).includes(sentence);
+  if (sentence === "") return -1;
+  return normalizeWhitespace(documentText).indexOf(sentence);
+}
+
+export function appearsVerbatim(candidate: string, documentText: string): boolean {
+  return locateVerbatim(candidate, documentText) !== -1;
 }
