@@ -11,6 +11,19 @@
   background: var(--page);
   border-bottom: 1px solid var(--rule);
   padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.signIn {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.signIn:hover {
+  color: var(--flag-severe);
 }
 
 .wordmark {

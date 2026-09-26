@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState } from "react";
 import styles from "./page.module.css";
 
@@ -35,6 +36,9 @@ export default function Home() {
     <div className={styles.page}>
       <header className={styles.masthead}>
         <span className={styles.wordmark}>Redline</span>
+        <Link href="/login" className={styles.signIn}>
+          Sign in
+        </Link>
       </header>
 
       <main className={styles.main}>

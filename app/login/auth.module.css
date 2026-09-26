@@ -1,0 +1,152 @@
+.page {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--page);
+  border-bottom: 1px solid var(--rule);
+  padding: 1rem 1.25rem;
+}
+
+.wordmark {
+  font-family: var(--font-document), serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.form {
+  width: 100%;
+  max-width: 24rem;
+  background: var(--page);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.input {
+  font: inherit;
+  color: var(--ink);
+  background: var(--page);
+  border: 1px solid var(--ink-quiet);
+  border-radius: 3px;
+  padding: 0.65rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: var(--ink-quiet);
+  margin: -0.6rem 0 1rem;
+}
+
+.status {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  min-height: 0;
+}
+
+.error,
+.notice {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.error {
+  color: var(--flag-severe);
+}
+
+.notice {
+  color: var(--confirm);
+}
+
+.submit {
+  font: inherit;
+  font-weight: 600;
+  color: var(--page);
+  background: var(--ink);
+  border: none;
+  border-radius: 3px;
+  padding: 0.85rem 1.85rem;
+  cursor: pointer;
+}
+
+.submit:hover {
+  background: var(--flag-severe);
+}
+
+.submit:disabled {
+  background: var(--ink-quiet);
+  cursor: not-allowed;
+}
+
+.switch {
+  font-size: 0.9rem;
+  color: var(--ink-quiet);
+  margin-top: 1.25rem;
+  text-align: center;
+}
+
+.link {
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link:hover {
+  color: var(--flag-severe);
+}
+
+.content {
+  width: 100%;
+  max-width: 40rem;
+}
+
+.empty {
+  color: var(--ink-quiet);
+  line-height: 1.5;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--ink-quiet);
+}
