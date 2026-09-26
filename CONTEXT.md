@@ -81,3 +81,9 @@ ADR 0006.
 The output for a document with nothing worth flagging: a plain statement that
 nothing needs the user's attention, together with the specific checks that were
 run and passed — so "clean" is evidenced, not an empty screen. See ADR 0005.
+
+"Clean" means no flags; it says nothing about "Not in this contract". When a
+clean document is missing protections, the report says no clause needs flagging
+and names how many protections are missing or only partly covered. It never
+says "Nothing here needs your attention" while any protection is absent or
+partial, so a clean result is never read as "safe to sign". See ADR 0006.
