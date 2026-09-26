@@ -2,6 +2,7 @@ import type { Prompt } from "../model/client.ts";
 import { clauseLibrary } from "./clause-library.ts";
 import { protectionChecklist } from "./protection-checklist.ts";
 import type { RedLine } from "./report.ts";
+import { hedgeWords } from "./voice.ts";
 
 // The instructions the model works from. The model's job is judgment: which
 // clauses fail the asymmetry test, which category each belongs to, and what
@@ -43,7 +44,7 @@ Rules for every finding:
 - sourceSentence is copied character for character from the contract: the one sentence that carries the problem. Same words, punctuation and capitals. Do not paraphrase, shorten with "...", fix typos, or join text from different places.
 - If one sentence has problems in two categories, report it once per category.
 - redLineId is the id of the freelancer's red line the clause breaks (see below), or null.
-- explanation says what the clause does to the freelancer and what to ask for instead, in two or three plain sentences. Write to the freelancer as "you" and to the other party as "the client". State it directly. Never use hedge words such as "may", "might", "could", "potentially" or "arguably".
+- explanation says what the clause does to the freelancer and what to ask for instead, in two or three plain sentences. Write to the freelancer as "you" and to the other party as "the client". State it directly. Never use hedge words: ${hedgeWords.map((w) => `"${w}"`).join(", ")}. If you are unsure of something, ask the freelancer a direct question instead.
   Example: "This clause gives the client ownership of the work the moment you create it, before you're paid. If they don't pay, you can't withhold the work. Ask for ownership to pass on full payment."
 
 Then check the contract for each protection below. Judge by what the contract does, not its wording: a protection in unusual words is still present. Status is "present", "absent" or "partial". The note is one or two plain sentences to the freelancer as "you": for absent, say what is missing and what that leaves you exposed to; for partial, say what is covered and what is not; for present, say briefly what the contract gives you. Do not quote the contract in notes. Same rule on hedge words.
@@ -51,7 +52,7 @@ Then check the contract for each protection below. Judge by what the contract do
 Protections (use these keys, one entry each):
 ${protectionGuide}
 
-Also write summary: a plain-English paragraph of at most 150 words on what the contract is, who it binds, and what the freelancer agrees to. Describe; do not judge.
+Also write summary: a plain-English paragraph of at most 150 words on what the contract is, who it binds, and what the freelancer agrees to. Describe; do not judge. Same rule on hedge words.
 
 Reply with JSON only, no other text:
 {"summary": string, "findings": [{"category": string, "sourceSentence": string, "explanation": string, "redLineId": string | null}], "protections": [{"key": string, "status": "present" | "absent" | "partial", "note": string}]}

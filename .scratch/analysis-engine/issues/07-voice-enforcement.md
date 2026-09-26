@@ -18,15 +18,41 @@ the analyzer flags rather than stays silent.
 scan has to cover `notInContract` notes as well as flags and the summary,
 so it waits on both prose surfaces existing.
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] A fake model response containing a hedge word in a flag explanation is
+- [x] A fake model response containing a hedge word in a flag explanation is
       corrected before the Report is returned; the returned Report contains
       no hedge words outside quoted source-sentence spans.
-- [ ] The scan excludes quoted source-sentence text — a hedge word that
+- [x] The scan excludes quoted source-sentence text — a hedge word that
       happens to appear inside the document's own wording does not trigger
       a correction.
-- [ ] The scan covers the summary and every `notInContract` note, not only
+- [x] The scan covers the summary and every `notInContract` note, not only
       flag explanations.
-- [ ] Given a marginal, citable case, the analyzer's documented bias is to
+- [x] Given a marginal, citable case, the analyzer's documented bias is to
       flag rather than stay silent, and a test exercises this directly.
+
+## Comments
+
+Implemented in `lib/analysis/voice.ts`; `analyze()` calls `enforceVoice()` as
+its last step. Tests in `voice.test.ts` (10); live checks now assert every
+report is hedge-free.
+
+- Scanned: summary, flag explanations, context notes, `notInContract` notes.
+  Flags' `sourceSentence` is never scanned, and a quoted span inside prose is
+  skipped when it is verbatim contract text (a made-up quote is still
+  scanned).
+- Hedge list (one source, also used in the prompts): may, might, could,
+  possibly, potentially, arguably, perhaps, probably, (un)likely, seem(s),
+  appear(s) to, conceivably, presumably. Not hedges: "May" next to a number
+  (the month), "couldn't".
+- Correction: only the offending strings go back to the model for a rewrite
+  (statement, or a direct question where unsure), up to two rounds, re-scanned
+  each time. A hedge that survives fails the analysis. No mechanical word
+  swaps: "may" → "can" changes meaning.
+- Prefer-the-false-flag: there is no confidence gate; a citable finding in a
+  flaggable category is always a flag, whatever confidence the model attaches
+  (tested). The prompt tells the model to flag close calls. Live: net 45 in
+  an otherwise fair contract (`marginalContract`) is flagged.
+
+Live run 2026-09-26 (Sonnet 5): all six live checks pass with no hedge words
+in any report.

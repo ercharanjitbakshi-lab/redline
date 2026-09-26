@@ -3,6 +3,7 @@ import { clauseLibrary, type FlagSeverity, type Severity } from "./clause-librar
 import { locateVerbatim, normalizeWhitespace } from "./citation.ts";
 import { protectionChecklist } from "./protection-checklist.ts";
 import { buildPrompt } from "./prompt.ts";
+import { enforceVoice } from "./voice.ts";
 import type {
   Check,
   ContextNote,
@@ -71,6 +72,10 @@ function floorForRedLine(severity: Severity): FlagSeverity {
 // The model proposes; this code disposes. Severity comes from the clause
 // library, every quote is checked against the document, and ordering is
 // fixed, so the same model output always gives the same Report.
+//
+// There is no confidence filter: every citable finding the model proposes in
+// a flaggable category becomes a flag. On a marginal call Redline prefers the
+// false flag to silence (docs/adr/0005).
 export async function analyze({ documentText, redLines }: Input, { model }: Deps): Promise<Report> {
   if (normalizeWhitespace(documentText) === "") {
     throw new Error("The document has no text to analyze.");
@@ -142,7 +147,7 @@ export async function analyze({ documentText, redLines }: Input, { model }: Deps
     return { key: p.key, name: p.name, status: answer.status, note: answer.note };
   });
 
-  return {
+  const report: Report = {
     summary,
     flags,
     contextNotes,
@@ -154,6 +159,10 @@ export async function analyze({ documentText, redLines }: Input, { model }: Deps
     ],
     droppedFlagCount: dropped,
   };
+
+  // Last step: no hedge words in anything Redline wrote (docs/adr/0005).
+  await enforceVoice(report, documentText, model);
+  return report;
 }
 
 // Reads the model's JSON. Anything unreadable fails the whole analysis:

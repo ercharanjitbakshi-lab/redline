@@ -5,7 +5,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { analyze } from "./analyze.ts";
-import { fairContract, oneSidedContract, unusualWordingContract } from "./fixtures.ts";
+import { fairContract, marginalContract, oneSidedContract, unusualWordingContract } from "./fixtures.ts";
+import { findHedges } from "./voice.ts";
 import { modelConfig } from "../model/config.ts";
 import { createOpenRouterClient } from "../model/openrouter.ts";
 import type { Report } from "./report.ts";
@@ -14,6 +15,17 @@ const model = await createOpenRouterClient({
   apiKey: process.env.OPENROUTER_API_KEY ?? "",
   config: modelConfig,
 });
+
+// Every live report must come back hedge-free in Redline's own prose.
+function assertNoHedges(report: Report, documentText: string) {
+  const own = [
+    report.summary,
+    ...report.flags.map((f) => f.explanation),
+    ...report.contextNotes.map((n) => n.note),
+    ...report.notInContract.map((e) => e.note),
+  ];
+  assert.deepEqual(own.flatMap((t) => findHedges(t, documentText)), [], "hedge words in Redline's own prose");
+}
 
 function show(label: string, report: Report) {
   console.log(`\n── ${label} ──`);
@@ -30,6 +42,7 @@ function show(label: string, report: Report) {
 test("live: the one-sided contract flags what a reviewer would, and only that", async () => {
   const report = await analyze({ documentText: oneSidedContract, redLines: [] }, { model });
   show("one-sided contract", report);
+  assertNoHedges(report, oneSidedContract);
   const flagged = new Set(report.flags.map((f) => f.category));
 
   for (const expected of [
@@ -60,6 +73,7 @@ test("live: the one-sided contract flags what a reviewer would, and only that", 
 test("live: the fair contract comes back clean", async () => {
   const report = await analyze({ documentText: fairContract, redLines: [] }, { model });
   show("fair contract", report);
+  assertNoHedges(report, fairContract);
   assert.equal(report.clean, true, `unexpected flags: ${report.flags.map((f) => f.category).join(", ")}`);
   assert.ok(report.checksRun.length > 0);
   const absent = report.notInContract.filter((e) => e.status === "absent").map((e) => e.key);
@@ -69,6 +83,7 @@ test("live: the fair contract comes back clean", async () => {
 test("live: protections in unusual wording are not reported absent", async () => {
   const report = await analyze({ documentText: unusualWordingContract, redLines: [] }, { model });
   show("unusual wording contract", report);
+  assertNoHedges(report, unusualWordingContract);
   const absent = report.notInContract.filter((e) => e.status === "absent").map((e) => e.key);
   assert.deepEqual(absent, [], "every protection is here, in unusual words");
 });
@@ -81,6 +96,7 @@ test("live: red lines in the user's own words are matched to the clauses that br
   ];
   const report = await analyze({ documentText: oneSidedContract, redLines }, { model });
   show("one-sided contract with red lines", report);
+  assertNoHedges(report, oneSidedContract);
   const hit = (id: string) => report.flags.filter((f) => f.hitsRedLine === id);
 
   const compete = hit("rl-compete");
@@ -94,4 +110,13 @@ test("live: red lines in the user's own words are matched to the clauses that br
   assert.equal(digital[0].severity, "high");
 
   assert.equal(hit("rl-renewal").length, 0, "nothing in the contract renews automatically");
+});
+
+test("live: a marginal but citable clause is flagged rather than passed over", async () => {
+  const report = await analyze({ documentText: marginalContract, redLines: [] }, { model });
+  show("marginal contract", report);
+  assertNoHedges(report, marginalContract);
+  const payment = report.flags.find((f) => f.category === "payment-delayed-or-gated");
+  assert.ok(payment, "net 45 is past the 30-day line; the bias says flag it");
+  assert.match(payment.sourceSentence, /forty-five \(45\) days/);
 });

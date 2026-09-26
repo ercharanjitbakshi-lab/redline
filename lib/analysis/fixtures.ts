@@ -113,3 +113,27 @@ exposure under this letter shall not exceed the sums Client has actually
 remitted to Studio, and Studio carries no exposure for lost profits or other
 knock-on losses.
 `;
+
+// Fair except for one marginal call: net 45 is past the 30 days the clause
+// library calls fine, but common and not outrageous. ADR 0005 says flag it.
+// The contract's own wording uses "may", which must not trip the hedge scan.
+export const marginalContract = `WEBSITE BUILD AGREEMENT
+
+1. Services. Contractor will design and build a five-page website for Client.
+
+2. Ownership. Ownership of the finished website passes to Client on final
+payment. Contractor keeps all code, components, and tools that existed before
+this Agreement.
+
+3. Payment. Client shall pay each invoice within forty-five (45) days of
+receipt. Late payments accrue interest at 1% per month.
+
+4. Acceptance. Client may request changes within five (5) business days of
+each delivery; after that, the delivery is accepted.
+
+5. Termination. Either party may end this Agreement with fourteen (14) days'
+written notice, and Client shall pay for all work done up to the end date.
+
+6. Liability. Each party's total liability is limited to the fees paid under
+this Agreement, and neither party is liable for indirect losses.
+`;
